@@ -1,8 +1,9 @@
 name: Exemplo de arquivo YML para Deploy de aplicação em ambiente Azure Functions (configurado para linguagem Python)
 
-on:
-  push: #referente a ativação do deploy através de um novo commit, ou push, ou seja, toda vez que houver um novo commit, o deploy será acionado automaticamente
-    branches: main #referente a branch que recebeu o novo commit
+# Tire o primeiro "#" das três linhas abaixo para iniciar a execução automática do GitHub Actions
+#on:
+#  push: #referente a ativação do deploy através de um novo commit, ou push, ou seja, toda vez que houver um novo commit, o deploy será acionado automaticamente
+#    branches: main #referente a branch que recebeu o novo commit
 
 env:
   AZURE_FUNCTIONAPP_NAME: # colocar o nome da aplicação no azure functions
