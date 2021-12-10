@@ -1,0 +1,45 @@
+name: Exemplo de arquivo YML para Deploy de aplicação em ambiente Azure Functions (configurado para linguagem Python)
+
+on:
+  push: #referente a ativação do deploy através de um novo commit, ou push, ou seja, toda vez que houver um novo commit, o deploy será acionado automaticamente
+    branches: main #referente a branch que recebeu o novo commit
+
+env:
+  AZURE_FUNCTIONAPP_NAME: # colocar o nome da aplicação no azure functions
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'   # defina o caminho da sua aplicação, para a efetuação do deploy, 
+                                        # geralmente é na pasta root (para isso apenas insira seguinte caminho entre aspas: '.')
+  
+  PYTHON_VERSION: '3.8'                 # define a versão do Python (suporta 3.6, 3.7, 3.8)
+
+jobs:
+  build-and-deploy: #define o nome do job
+    # define uma "máquina intermediária, que irá instalar os pacotes e enviar o projeto diretamente para a Function no step seguinte"
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@main
+
+    - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    # faz instalação das dependencias do projeto encontradas no requirements.txt
+    - name: 'Resolve Project Dependencies Using Pip'
+      shell: bash
+      run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+        popd
+    #
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1.3.1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        publish-profile: ${{ secrets.SEU_PUBLISH_PROFILE_ID_AZURE }} # inserir o publish-profile da function, para que o actions possa 
+                                                                               # identificar a function na azure, como este é um dado sensível, é recomentado que seja guardado
+                                                                               # no secrets do repositório
+        scm-do-build-during-deployment: true
