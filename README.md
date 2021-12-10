@@ -8,7 +8,7 @@ Para Preparar o Ambiente Local Python para testes, ou execução, execute:
 # Clonar repositório
 $ git clone https://github.com/henriquemt1312/template-repository.git
 
-Instalar dependências
+# Instalar dependências
 $ python -m pip install --upgrade pip
 $ pip install -r requirements.txt
 ```
